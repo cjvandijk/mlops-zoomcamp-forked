@@ -4,13 +4,13 @@ apiVersion: 1
 # list of datasources to insert/update
 # available in the database
 datasources:
-  - name: PostgreSQL
+  - name: NewPostgreSQL
     type: postgres
-    access: proxy
-    url: db.:5432
-    database: taxi_monitoring
+    url: db:5432
+    database: postgres
     user: postgres
     secureJsonData:
       password: 'example'
     jsonData:
       sslmode: 'disable'
+      database: test
