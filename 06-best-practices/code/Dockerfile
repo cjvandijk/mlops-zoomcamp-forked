@@ -1,6 +1,8 @@
-FROM public.ecr.aws/lambda/python:3.9
+# FROM public.ecr.aws/lambda/python:3.9
+FROM agrigorev/zoomcamp-model:mlops-2024-3.10.13-slim
 
-RUN pip install -U pip
+WORKDIR /home/ubuntu/code
+
 RUN pip install pipenv
 
 COPY [ "Pipfile", "Pipfile.lock", "./" ]
