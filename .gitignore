@@ -12,6 +12,7 @@ venv
 .idea
 **/artifacts/
 **/models/
+code2/integration_tests/model/
 
 __pycache__/
 **.env
