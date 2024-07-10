@@ -8,9 +8,22 @@ import mlflow
 # kinesis_client = boto3.client('kinesis')
 
 
+def get_model_location (run_id):
+    model_location = os.getenv("MODEL_LOCATION")
+    
+    if model_location is not None:
+        return model_location
+    
+    model_bucket = os.getenv('MODEL_BUCKET', 'claudia-mlops')
+    experiment_id = os.getenv('MLFLOW_EXPERIMENT_ID', '1')
+    model_location = f's3://{model_bucket}/{experiment_id}/{run_id}/artifacts/model/'
+    
+    return model_location
+
+
 def load_model(run_id):
-    logged_model = f's3://claudia-mlops/1/{run_id}/artifacts/model/'
-    model = mlflow.pyfunc.load_model(logged_model)
+    model_path = get_model_location(run_id)
+    model = mlflow.pyfunc.load_model(model_path)
     return model
 
 
@@ -21,8 +34,10 @@ def base64_decode(encoded_data):
 
 
 class ModelService():
-    def __init__(self, model):
+    def __init__(self, model, model_version=None, callbacks=None):
         self.model = model
+        self.model_version = model_version
+        self.callbacks = callbacks or []
 
 
     def prepare_features(self, ride):
@@ -55,7 +70,7 @@ class ModelService():
         
             prediction_event = {
                 'model': 'ride_duration_prediction_model',
-                'version': '123',
+                'version': self.model_version,
                 'prediction': {
                     'ride_duration': prediction,
                     'ride_id': ride_id   
@@ -78,5 +93,13 @@ class ModelService():
     
 def init(prediction_stream_name: str, run_id: str, test_run: bool):
     model = load_model(run_id)
-    model_service = ModelService(model)
+
+    callbacks = []
+
+    model_service = ModelService(
+        model=model, 
+        model_version=run_id, 
+        callbacks=callbacks
+        )
+    
     return model_service
