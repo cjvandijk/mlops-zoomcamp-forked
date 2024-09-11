@@ -5,6 +5,7 @@ import pandas as pd
 
 import batch
 
+
 def dt(hour, minute, second=0):
     return datetime(2021, 1, 1, hour, minute, second)
 

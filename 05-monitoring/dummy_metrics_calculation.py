@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s]: %(m
 SEND_TIMEOUT = 10
 rand = random.Random()
 
-create_table_statement = """
+CREATE_TABLE_STATEMENT = """
 drop table if exists dummy_metrics;
 create table dummy_metrics(
 	timestamp timestamp,
@@ -29,7 +29,7 @@ def prep_db():
 		if len(res.fetchall()) == 0:
 			conn.execute("create database test;")
 		with psycopg.connect("host=localhost port=5432 dbname=test user=postgres password=example") as conn:
-			conn.execute(create_table_statement)
+			conn.execute(CREATE_TABLE_STATEMENT)
 
 def calculate_dummy_metrics_postgresql(curr):
 	value1 = rand.randint(0, 1000)
